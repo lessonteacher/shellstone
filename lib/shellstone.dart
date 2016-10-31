@@ -21,6 +21,8 @@ export 'src/metadata/metadata_proxies.dart';
 export 'src/datalayer/database_adapter.dart';
 export 'src/datalayer/querylang.dart';
 export 'src/datalayer/schema/schema.dart';
+export 'src/datalayer/schema/schema_field.dart';
+export 'src/datalayer/schema/schema_relation.dart';
 export 'src/events/events.dart';
 export 'src/events/event_registration.dart';
 export 'src/entities/entity_wrapper.dart';
@@ -75,16 +77,26 @@ addAdapter(String name, DatabaseAdapter adapter) {
 ///
 /// **Note** you cant listen to events that trigger during setup such as some
 /// adapter events for example. To listen on those you must use the @Listen annotation
-addListener(EventRegistration reg, Function f, [loc = 'pre']) {
-  addHandler(Listen, reg, f, loc);
+addListener(EventRegistration reg, Function f) {
+  addHandler(Listen, reg, f);
 }
 
 /// Adds a hook for a given [EventRegistration]
 ///
 /// **Note** you cant listen to events that trigger during setup such as some
 /// adapter events for example. To listen on those you must use the @Listen annotation
-addHook(EventRegistration reg, Function f, [loc = 'pre']) {
-  addHandler(Listen, reg, f, loc);
+addHook(EventRegistration reg, Function f) {
+  addHandler(Hook, reg, f);
+}
+
+/// Removes a hook for a given [EventRegistration]
+removeListener(EventRegistration reg, Function f) {
+  removeHandler(Listen, reg, f);
+}
+
+/// Removes a hook for a given [EventRegistration]
+removeHook(EventRegistration reg, Function f) {
+  removeHandler(Hook, reg, f);
 }
 
 /// Allows for the triggering of some [Event] e
@@ -145,4 +157,8 @@ _loadSchemas() {
 
   // Construct the schema which will slam it into the cache
   meta.forEach((name, proxy) => new Schema.fromMetadata(name, proxy));
+
+  // Copies relation keys into their schemas, at least it only happens once
+  // otherwise a nicer solution might be better for this...
+  Schema.getAll().forEach((schema) => schema.transferDerivedFields());
 }

@@ -3,6 +3,8 @@ import 'package:test/test.dart';
 import 'package:shellstone/shellstone.dart';
 import '../test_setups.dart';
 
+// TODO: Is this suite of tests really required? The metadata set seems more
+// useful?>
 main() {
   setUpAll(() async {
     // Start shellstone to setup any annotations

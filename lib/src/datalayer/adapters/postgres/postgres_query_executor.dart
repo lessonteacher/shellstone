@@ -19,7 +19,6 @@ class PostgresQueryExecutor extends SqlExecutor {
 
   // Execute some sql
   executeSql(sql, [bool release]) async {
-    // conn = await psql.connect(adapter.uri);
     conn = await adapter.pool.connect();
 
     var result;
